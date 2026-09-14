@@ -17,4 +17,16 @@ router.post('/',verifyToken,async (req,res) => {
     }
 });
 
+router.get('/', verifyToken, async (req,res) => {
+    try{
+        const user = req.user._id;
+        const locations = await Location.find({owner:user});
+        res.status(200).json(locations);
+    }catch(err){
+        res.status(400).json({
+            error: err.message
+        });
+    }
+});
+
 module.exports = router;
