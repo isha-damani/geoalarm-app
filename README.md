@@ -23,13 +23,15 @@ MERN was chosen to reuse a single JavaScript-based stack across the whole app, a
 - Express server connected to MongoDB Atlas
 - Data models: `User`, `Location`, `AlarmLog` (with a `2dsphere` index on `Location.coordinates` for efficient proximity queries)
 - Auth routes: `POST /api/auth/signup` and `POST /api/auth/login`, with hashed passwords and JWT issuance
-- Tested end-to-end with Thunder Client
+- JWT auth middleware protecting private routes, attaching the logged-in user to `req.user`
+- Location CRUD: create, list (scoped to the logged-in user), and delete, all ownership-checked so users can only access their own locations
+- Tested end-to-end with Thunder Client, including negative cases (missing/invalid token, deleting another user's location)
 
 **Planned next:**
-- Auth middleware to protect routes with JWT verification
-- Location CRUD (save, list, edit, delete named locations with radius)
+- Location edit (PATCH) route
+- AlarmLog routes: create on trigger, mark acknowledged, fetch history
 - Frontend: map view, live geolocation tracking, radius selection
-- Distance-based alarm triggering and alarm history log
+- Distance-based alarm triggering, wired to the AlarmLog routes
 - Scalability pass: geospatial `$near` queries, indexing review
 
 ## Data model
@@ -67,7 +69,12 @@ MERN was chosen to reuse a single JavaScript-based stack across the whole app, a
 
 ### API endpoints (so far)
 
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/api/auth/signup` | Create a new user account |
-| POST | `/api/auth/login` | Log in and receive a JWT |
+| Method | Endpoint | Auth required | Description |
+|---|---|---|---|
+| POST | `/api/auth/signup` | No | Create a new user account |
+| POST | `/api/auth/login` | No | Log in and receive a JWT |
+| POST | `/api/locations` | Yes | Create a new saved location (name, radius, coordinates) |
+| GET | `/api/locations` | Yes | List all locations owned by the logged-in user |
+| DELETE | `/api/locations/:id` | Yes | Delete a location (only if owned by the logged-in user) |
+
+Protected routes expect a header: `Authorization: Bearer <token>`
