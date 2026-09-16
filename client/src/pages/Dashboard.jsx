@@ -3,6 +3,11 @@ import axios from 'axios';
 
 function Dashboard() {
     const [locations, setLocations] = useState([]);
+    const [name, setName] = useState('');
+    const [radius, setRadius] = useState('');
+    const [lat, setLat] = useState('');
+    const [lng, setLng] = useState('');
+
 
     useEffect(() => {
         async function fetchLocations(){
@@ -18,14 +23,47 @@ function Dashboard() {
         fetchLocations();
     }, []);
 
+    async function handleAddLocation(e){
+        e.preventDefault();
+        try{
+            const token = localStorage.getItem('token');
+            const response = await axios.post(
+                "http://localhost:3000/api/locations", 
+                {
+                    name,
+                    radius,
+                    coordinates: {
+                        type: "Point",
+                        coordinates:[Number(lng),Number(lat)]
+                    }
+                }, 
+                {headers : {Authorization : `Bearer ${token}`}}
+            );
+            console.log(response.data);
+            setLocations([...locations, response.data]);
+        }catch(err){
+            console.log(err);
+        }
+    }
+
     return (
         <div>
             <h2>Dashboard</h2>
+            <h2>Saved Locations</h2>
             <ul>
                 {locations.map((location) => (
                     <li key={location._id}>{location.name}</li>
                 ))}
             </ul>
+
+            <h2>Add Location</h2>
+            <form onSubmit={handleAddLocation}>
+                <input type='text' value={name} placeholder='name' onChange={(e) => setName(e.target.value)}></input>
+                <input type='number' value={radius} placeholder='radius' onChange={(e) => setRadius(e.target.value)}></input>
+                <input type='number' value={lat} placeholder='latitude' onChange={(e) => setLat(e.target.value)}></input>
+                <input type='number' value={lng} placeholder='longitude' onChange={(e) => setLng(e.target.value)}></input>
+                <button type='submit'>Submit</button>
+            </form>
         </div>
     )
 }
