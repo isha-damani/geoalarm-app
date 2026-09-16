@@ -3,11 +3,13 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 const router = require("./routes/auth");
 const locationRouter = require("./routes/locations");
+const alarmLogRouter = require("./routes/alarmLogs");
 
 const app = express();
 app.use(express.json());
 app.use("/api/auth",router);
 app.use("/api/locations",locationRouter);
+app.use("/api/alarmLogs", alarmLogRouter);
 
 const PORT = process.env.PORT || 3000;
 
