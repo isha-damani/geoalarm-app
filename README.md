@@ -13,7 +13,7 @@ Falling asleep on public transit and missing your stop is a common, small-but-re
 - **Backend:** Node.js + Express
 - **Database:** MongoDB (via MongoDB Atlas), using Mongoose as the ODM
 - **Auth:** JWT-based authentication, passwords hashed with bcryptjs
-- **Frontend:** React (planned — not yet built)
+- **Frontend:** React (via Vite), React Router for navigation, axios for API calls
 
 MERN was chosen to reuse a single JavaScript-based stack across the whole app, and MongoDB's native geospatial support (`2dsphere` indexes, GeoJSON) fits the location-based nature of the problem directly, rather than bolting geo-queries onto a relational schema.
 
@@ -25,13 +25,19 @@ MERN was chosen to reuse a single JavaScript-based stack across the whole app, a
 - Auth routes: `POST /api/auth/signup` and `POST /api/auth/login`, with hashed passwords and JWT issuance
 - JWT auth middleware protecting private routes, attaching the logged-in user to `req.user`
 - Location CRUD: create, list (scoped to the logged-in user), and delete, all ownership-checked so users can only access their own locations
+- AlarmLog routes: create on trigger, list history, mark acknowledged (PATCH), all ownership-checked (including verifying the referenced location belongs to the requesting user)
 - Tested end-to-end with Thunder Client, including negative cases (missing/invalid token, deleting another user's location)
+- Frontend: signup and login pages with controlled forms, calling the backend over axios (CORS configured on the backend to allow this)
+- JWT stored in `localStorage` after login; redirects to the dashboard on login and to the login page after signup
+- `ProtectedRoute` wrapper component guarding the dashboard route, redirecting logged-out users to `/login`
+- Dashboard: fetches and displays the logged-in user's saved locations, and a form to add a new location (plain lat/lng inputs for now, converted to GeoJSON on submit) — list updates immediately on add, no reload needed
 
 **Planned next:**
+- Delete-from-UI (backend route exists, not yet wired to a button)
 - Location edit (PATCH) route
-- AlarmLog routes: create on trigger, mark acknowledged, fetch history
-- Frontend: map view, live geolocation tracking, radius selection
-- Distance-based alarm triggering, wired to the AlarmLog routes
+- Map view to replace plain lat/lng inputs, plus a radius selector
+- Live geolocation tracking and distance-based alarm triggering, wired to the AlarmLog routes
+- Alarm history view on the frontend
 - Scalability pass: geospatial `$near` queries, indexing review
 
 ## Data model
@@ -56,7 +62,8 @@ MERN was chosen to reuse a single JavaScript-based stack across the whole app, a
 
 ## Setup
 
-1. Clone the repo and navigate to `/server`
+**Backend**
+1. Navigate to `/server`
 2. Run `npm install`
 3. Create a `.env` file in `/server` with:
    ```
@@ -64,8 +71,12 @@ MERN was chosen to reuse a single JavaScript-based stack across the whole app, a
    PORT=3000
    JWT_SECRET=your_secret_key
    ```
-4. Run `node server.js`
-5. Server runs on `http://localhost:3000` (or your configured `PORT`)
+4. Run `node server.js` — runs on `http://localhost:3000` (or your configured `PORT`)
+
+**Frontend**
+1. Navigate to `/client`
+2. Run `npm install`
+3. Run `npm run dev` — runs on `http://localhost:5173`
 
 ### API endpoints (so far)
 
@@ -76,5 +87,8 @@ MERN was chosen to reuse a single JavaScript-based stack across the whole app, a
 | POST | `/api/locations` | Yes | Create a new saved location (name, radius, coordinates) |
 | GET | `/api/locations` | Yes | List all locations owned by the logged-in user |
 | DELETE | `/api/locations/:id` | Yes | Delete a location (only if owned by the logged-in user) |
+| POST | `/api/alarmLogs` | Yes | Create an alarm log entry for a location you own |
+| GET | `/api/alarmLogs` | Yes | List all alarm logs owned by the logged-in user |
+| PATCH | `/api/alarmLogs/:id` | Yes | Mark an alarm log as acknowledged |
 
 Protected routes expect a header: `Authorization: Bearer <token>`
