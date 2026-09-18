@@ -1,5 +1,6 @@
 import {useState, useEffect} from 'react';
 import axios from 'axios';
+import LocationMap from '../components/LocationMap';
 
 function Dashboard() {
     const [locations, setLocations] = useState([]);
@@ -63,6 +64,7 @@ function Dashboard() {
     return (
         <div>
             <h2>Dashboard</h2>
+            <LocationMap/>
             <h2>Saved Locations</h2>
             <ul>
                 {locations.map((location) => (
