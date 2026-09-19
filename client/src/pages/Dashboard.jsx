@@ -1,6 +1,8 @@
+//IMPORTS
 import {useState, useEffect} from 'react';
 import axios from 'axios';
 import LocationMap from '../components/LocationMap';
+import { getDistanceInMeters } from '../utils/distance';
 
 function Dashboard() {
     const [locations, setLocations] = useState([]);
@@ -9,7 +11,10 @@ function Dashboard() {
     const [lat, setLat] = useState('');
     const [lng, setLng] = useState('');
     const [liveLocation, setLiveLocation] = useState(null);
+    const [activeAlarmLocationId, setActiveAlarmLocationId] = useState(null);
+    const [selectedLocationId, setSelectedLocationId] = useState('');
 
+    //FETCH LOCATIONS
     useEffect(() => {
         async function fetchLocations(){
             try{
@@ -24,6 +29,8 @@ function Dashboard() {
         fetchLocations();
     }, []);
 
+
+    //LIVE LOCATION
     useEffect(() => {
         const successCallback =  (pos) => {
             // console.log(pos.coords.latitude, pos.coords.longitude);
@@ -38,8 +45,20 @@ function Dashboard() {
         navigator.geolocation.watchPosition(successCallback, errorCallback);
     },[]);
 
-    
 
+    //DISTANCE CHECK FOR ALARMS
+    useEffect(() => {
+        if(!liveLocation) return;
+        if(!activeAlarmLocationId) return;
+        const location = locations.find(location => location._id === activeAlarmLocationId);
+        if(!location) return;
+        const distance = getDistanceInMeters(liveLocation.lat, liveLocation.lng, location.coordinates.coordinates[1], location.coordinates.coordinates[0]);
+        if(distance <= location.radius){
+            console.log("ALARM!");
+        }
+    }, [liveLocation, activeAlarmLocationId]);
+    
+    //ADD LOCATION
     async function handleAddLocation(e){
         e.preventDefault();
         try{
@@ -63,6 +82,7 @@ function Dashboard() {
         }
     }
 
+    //DELETE LOCATION
     async function handleDelete(id){
         try{
             const token = localStorage.getItem('token');
@@ -77,14 +97,40 @@ function Dashboard() {
         }
     }
 
+    //SET ALARM
+    function handleSetAlarm(){
+        setActiveAlarmLocationId(selectedLocationId);
+    }
+
+    //RENDER
     return (
         <div>
+            <h1>GEO-ALARM</h1>
             <h2>Dashboard</h2>
             <p>Selected location: {lat}, {lng}</p>
             <LocationMap onLocationSelect={(lat,lng) => {
                 setLat(lat);
                 setLng(lng);
             }} liveLocation={liveLocation} />
+
+            <h2>Set an alarm</h2>
+            <select
+            value={selectedLocationId}
+            onChange={(e) => setSelectedLocationId(e.target.value)}
+            >
+                <option value="">Select a location</option>
+                {locations.map((location) => (
+                    <option key={location._id} value={location._id}>
+                        {location.name}
+                    </option>
+                ))}
+            </select>
+            <button 
+            disabled={!selectedLocationId}
+            onClick={handleSetAlarm}> 
+            Set Alarm
+            </button>
+
             <h2>Saved Locations</h2>
             <ul>
                 {locations.map((location) => (
@@ -94,7 +140,7 @@ function Dashboard() {
     
                 ))}
             </ul>
-
+        
             <h2>Add Location</h2>
             <form onSubmit={handleAddLocation}>
                 <input type='text' value={name} placeholder='name' onChange={(e) => setName(e.target.value)}></input>
