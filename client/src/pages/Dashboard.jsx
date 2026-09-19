@@ -64,6 +64,7 @@ function Dashboard() {
     return (
         <div>
             <h2>Dashboard</h2>
+            <p>Selected location: {lat}, {lng}</p>
             <LocationMap onLocationSelect={(lat,lng) => {
                 setLat(lat);
                 setLng(lng);
@@ -82,8 +83,6 @@ function Dashboard() {
             <form onSubmit={handleAddLocation}>
                 <input type='text' value={name} placeholder='name' onChange={(e) => setName(e.target.value)}></input>
                 <input type='number' value={radius} placeholder='radius' onChange={(e) => setRadius(e.target.value)}></input>
-                <input type='number' value={lat} placeholder='latitude' onChange={(e) => setLat(e.target.value)}></input>
-                <input type='number' value={lng} placeholder='longitude' onChange={(e) => setLng(e.target.value)}></input>
                 <button type='submit'>Submit</button>
             </form>
         </div>
