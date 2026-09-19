@@ -30,13 +30,13 @@ MERN was chosen to reuse a single JavaScript-based stack across the whole app, a
 - Frontend: signup and login pages with controlled forms, calling the backend over axios (CORS configured on the backend to allow this)
 - JWT stored in `localStorage` after login; redirects to the dashboard on login and to the login page after signup
 - `ProtectedRoute` wrapper component guarding the dashboard route, redirecting logged-out users to `/login`
-- Dashboard: fetches and displays the logged-in user's saved locations, and a form to add a new location (plain lat/lng inputs for now, converted to GeoJSON on submit) — list updates immediately on add, no reload needed
+- Dashboard: fetches, displays, creates, and deletes the logged-in user's saved locations — list updates immediately on add/delete, no reload needed
+- Interactive map (Leaflet + react-leaflet) on the Dashboard: click to pick a location for the add-location form, with a marker showing the selection and a coordinate readout; click the marker again to deselect
+- Live geolocation tracking via the browser's Geolocation API (`watchPosition`), shown as a distinct red marker on the map, separate from the location-picker marker
 
 **Planned next:**
-- Delete-from-UI (backend route exists, not yet wired to a button)
 - Location edit (PATCH) route
-- Map view to replace plain lat/lng inputs, plus a radius selector
-- Live geolocation tracking and distance-based alarm triggering, wired to the AlarmLog routes
+- Distance-based alarm triggering: compare live position against saved locations/radii, trigger an alarm and log it via the AlarmLog routes
 - Alarm history view on the frontend
 - Scalability pass: geospatial `$near` queries, indexing review
 
