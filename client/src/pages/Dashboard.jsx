@@ -64,7 +64,10 @@ function Dashboard() {
     return (
         <div>
             <h2>Dashboard</h2>
-            <LocationMap/>
+            <LocationMap onLocationSelect={(lat,lng) => {
+                setLat(lat);
+                setLng(lng);
+            }}/>
             <h2>Saved Locations</h2>
             <ul>
                 {locations.map((location) => (

@@ -1,5 +1,6 @@
-import {TileLayer, MapContainer} from 'react-leaflet';
-function LocationMap(){
+import {TileLayer, MapContainer, useMapEvents, Marker} from 'react-leaflet';
+import {useState} from 'react';
+function LocationMap({onLocationSelect}){
     return(
         <MapContainer
         center={[19.0760,72.8777]}
@@ -11,7 +12,21 @@ function LocationMap(){
             attribution="© OpenStreetMap contributors"
             >
             </TileLayer>
+            <LocationMarker onLocationSelect={onLocationSelect} />
         </MapContainer>
     )
 }
+
+function LocationMarker({onLocationSelect}){
+    const [position, setPosition] = useState(null);
+    useMapEvents({
+        click(e){
+            console.log(e.latlng);
+            setPosition(e.latlng);
+            onLocationSelect(e.latlng.lat, e.latlng.lng);
+        }
+    })
+    return position ? <Marker position={position}></Marker> : null;
+}
+
 export default LocationMap;
