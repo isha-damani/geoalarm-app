@@ -8,7 +8,7 @@ function Dashboard() {
     const [radius, setRadius] = useState('');
     const [lat, setLat] = useState('');
     const [lng, setLng] = useState('');
-
+    const [liveLocation, setLiveLocation] = useState(null);
 
     useEffect(() => {
         async function fetchLocations(){
@@ -23,6 +23,22 @@ function Dashboard() {
         }
         fetchLocations();
     }, []);
+
+    useEffect(() => {
+        const successCallback =  (pos) => {
+            // console.log(pos.coords.latitude, pos.coords.longitude);
+            setLiveLocation({
+                lat: pos.coords.latitude,
+                lng: pos.coords.longitude
+            })
+        }
+        const errorCallback = (err) => {
+            console.log(err);
+        }
+        navigator.geolocation.watchPosition(successCallback, errorCallback);
+    },[]);
+
+    
 
     async function handleAddLocation(e){
         e.preventDefault();
