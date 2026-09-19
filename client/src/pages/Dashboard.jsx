@@ -1,5 +1,5 @@
 //IMPORTS
-import {useState, useEffect} from 'react';
+import {useState, useEffect, act} from 'react';
 import axios from 'axios';
 import LocationMap from '../components/LocationMap';
 import { getDistanceInMeters } from '../utils/distance';
@@ -13,6 +13,7 @@ function Dashboard() {
     const [liveLocation, setLiveLocation] = useState(null);
     const [activeAlarmLocationId, setActiveAlarmLocationId] = useState(null);
     const [selectedLocationId, setSelectedLocationId] = useState('');
+    const [formResetKey, setFormResetKey] = useState(0);
 
     //FETCH LOCATIONS
     useEffect(() => {
@@ -53,7 +54,22 @@ function Dashboard() {
         const location = locations.find(location => location._id === activeAlarmLocationId);
         if(!location) return;
         const distance = getDistanceInMeters(liveLocation.lat, liveLocation.lng, location.coordinates.coordinates[1], location.coordinates.coordinates[0]);
+        async function triggerAlarm(){
+            try{
+                const token = localStorage.getItem('token');
+                const response = await axios.post(
+                    "http://localhost:3000/api/alarmLogs",
+                    {location: activeAlarmLocationId},
+                    {headers : {Authorization : `Bearer ${token}`}}
+                );
+                setActiveAlarmLocationId(null);
+                // console.log(response.data);
+            }catch(err){
+                console.log(err);
+            }
+        }
         if(distance <= location.radius){
+            triggerAlarm();
             console.log("ALARM!");
         }
     }, [liveLocation, activeAlarmLocationId]);
@@ -77,6 +93,11 @@ function Dashboard() {
             );
             console.log(response.data);
             setLocations([...locations, response.data]);
+            setName('');
+            setRadius('');
+            setLat('');
+            setLng('');
+            setFormResetKey(formResetKey + 1);
         }catch(err){
             console.log(err);
         }
@@ -102,6 +123,8 @@ function Dashboard() {
         setActiveAlarmLocationId(selectedLocationId);
     }
 
+
+    
     //RENDER
     return (
         <div>
@@ -111,7 +134,10 @@ function Dashboard() {
             <LocationMap onLocationSelect={(lat,lng) => {
                 setLat(lat);
                 setLng(lng);
-            }} liveLocation={liveLocation} />
+            }} 
+            liveLocation={liveLocation} 
+            resetKey={formResetKey}/>
+            
 
             <h2>Set an alarm</h2>
             <select

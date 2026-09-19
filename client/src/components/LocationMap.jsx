@@ -8,7 +8,7 @@ const redIcon = L.icon({
     iconAnchor: [12, 41]
 });
 
-function LocationMap({onLocationSelect, liveLocation}){
+function LocationMap({onLocationSelect, liveLocation, resetKey}){
     return(
         <MapContainer
         center={[17.530322442319388, 78.48127728011036]}
@@ -20,7 +20,7 @@ function LocationMap({onLocationSelect, liveLocation}){
             attribution="© OpenStreetMap contributors"
             >
             </TileLayer>
-            <LocationMarker onLocationSelect={onLocationSelect} />
+            <LocationMarker key={resetKey} onLocationSelect={onLocationSelect} />
             {liveLocation ? <Marker position={liveLocation} icon={redIcon}></Marker> : null}
         </MapContainer>
     )
