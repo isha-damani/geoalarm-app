@@ -84,7 +84,7 @@ function Dashboard() {
             <LocationMap onLocationSelect={(lat,lng) => {
                 setLat(lat);
                 setLng(lng);
-            }}/>
+            }} liveLocation={liveLocation} />
             <h2>Saved Locations</h2>
             <ul>
                 {locations.map((location) => (
