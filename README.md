@@ -2,7 +2,7 @@
 
 A location-based alarm app that tracks your live position and wakes you up (via an in-app alarm) when you arrive at or cross a location you've set — built for situations like napping on a bus/train without missing your stop.
 
-**Status: in progress.** This README reflects what's currently built and what's planned next.
+**Status: core feature complete.** The main loop — pick a location, arm an alarm, get tracked live, get alerted on arrival — works end to end. This README reflects what's currently built and what's planned next.
 
 ## Problem it solves
 
