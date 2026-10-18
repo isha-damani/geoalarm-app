@@ -5,15 +5,18 @@ import Dashboard from './pages/Dashboard';
 import AlarmHistory from './pages/AlarmHistory';
 import './App.css';
 import ProtectedRoute from './components/ProtectedRoute';
+import AppLayout from './layouts/AppLayout';
 
 function App() {
 
   return (
     <Routes>
-      <Route path = '/' element={<ProtectedRoute><Dashboard/></ProtectedRoute>}></Route>
-      <Route path = '/signup' element={<Signup />}></Route>
-      <Route path = '/login' element={<Login />}></Route>
-      <Route path='/history' element={<ProtectedRoute><AlarmHistory /></ProtectedRoute>}></Route>
+      <Route path='/signup' element={<Signup />} />
+      <Route path='/login' element={<Login />} />
+      <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+          <Route path='/' element={<Dashboard />} />
+          <Route path='/history' element={<AlarmHistory />} />
+      </Route>
     </Routes>
   )
 }

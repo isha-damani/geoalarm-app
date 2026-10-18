@@ -1,86 +1,17 @@
 //IMPORTS
-import {useState, useEffect, act} from 'react';
+import {useState} from 'react';
 import axios from 'axios';
 import LocationMap from '../components/LocationMap';
-import { getDistanceInMeters } from '../utils/distance';
-import { playAlarmSound } from '../utils/playAlarmSound';
+import { useOutletContext } from 'react-router-dom';
 
 function Dashboard() {
-    const [locations, setLocations] = useState([]);
+    const {locations, setLocations, liveLocation, setActiveAlarmLocationId} = useOutletContext();
     const [name, setName] = useState('');
     const [radius, setRadius] = useState('');
     const [lat, setLat] = useState('');
     const [lng, setLng] = useState('');
-    const [liveLocation, setLiveLocation] = useState(null);
-    const [activeAlarmLocationId, setActiveAlarmLocationId] = useState(null);
     const [selectedLocationId, setSelectedLocationId] = useState('');
     const [formResetKey, setFormResetKey] = useState(0);
-    const [alarmModal, setAlarmModal] = useState(false);
-    const [currentAlarmLogId, setCurrentAlarmLogId] = useState(null);
-    const [stopAlarmFn, setStopAlarmFn] = useState(null);
-
-    //FETCH LOCATIONS
-    useEffect(() => {
-        async function fetchLocations(){
-            try{
-                const token = localStorage.getItem('token');
-                const response = await axios.get("http://localhost:3000/api/locations", {headers : {Authorization : `Bearer ${token}`}});
-                // console.log(response.data);
-                setLocations(response.data); 
-            }catch(err){
-                console.log(err);
-            }
-        }
-        fetchLocations();
-    }, []);
-
-
-    //LIVE LOCATION
-    useEffect(() => {
-        const successCallback =  (pos) => {
-            // console.log(pos.coords.latitude, pos.coords.longitude);
-            setLiveLocation({
-                lat: pos.coords.latitude,
-                lng: pos.coords.longitude
-            })
-        }
-        const errorCallback = (err) => {
-            console.log(err);
-        }
-        navigator.geolocation.watchPosition(successCallback, errorCallback);
-    },[]);
-
-
-    //DISTANCE CHECK FOR ALARMS
-    useEffect(() => {
-        if(!liveLocation) return;
-        if(!activeAlarmLocationId) return;
-        const location = locations.find(location => location._id === activeAlarmLocationId);
-        if(!location) return;
-        const distance = getDistanceInMeters(liveLocation.lat, liveLocation.lng, location.coordinates.coordinates[1], location.coordinates.coordinates[0]);
-        async function triggerAlarm(){
-            try{
-                const token = localStorage.getItem('token');
-                const response = await axios.post(
-                    "http://localhost:3000/api/alarmLogs",
-                    {location: activeAlarmLocationId},
-                    {headers : {Authorization : `Bearer ${token}`}}
-                );
-                setCurrentAlarmLogId(response.data._id);
-                setActiveAlarmLocationId(null);
-                // console.log(response.data);
-            }catch(err){
-                console.log(err);
-            }
-        }
-        if(distance <= location.radius){
-            const stop = playAlarmSound();
-            setStopAlarmFn(() => stop);
-            setAlarmModal(true);
-            triggerAlarm();
-            console.log("ALARM!");
-        }
-    }, [liveLocation, activeAlarmLocationId]);
     
     //ADD LOCATION
     async function handleAddLocation(e){
@@ -131,21 +62,6 @@ function Dashboard() {
         setActiveAlarmLocationId(selectedLocationId);
     }
 
-    //ACKNOWLEDGE ALARM
-    async function handleAcknowledgeAlarm(){
-        stopAlarmFn();
-        try{
-            const token = localStorage.getItem('token');
-            const response = await axios.patch(
-                `http://localhost:3000/api/alarmLogs/${currentAlarmLogId}`,
-                {},
-                {headers : {Authorization : `Bearer ${token}`}}
-            )
-            setAlarmModal(false);
-        }catch(err){
-            console.log(err);
-        }
-    }
     
     //RENDER
     return (
@@ -159,31 +75,6 @@ function Dashboard() {
             }} 
             liveLocation={liveLocation} 
             resetKey={formResetKey}/>
-
-        {alarmModal ? (
-            <div style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                zIndex: 999
-            }}>
-                <div style={{
-                    backgroundColor: 'green',
-                    padding: '2rem',
-                    borderRadius: '8px',
-                    textAlign: 'center'
-                }}>
-                    <h2>Reached!</h2>
-                    <button onClick={handleAcknowledgeAlarm}>OK</button>
-                </div>
-            </div>
-        ) : null}           
 
             <h2>Set an alarm</h2>
             <select
