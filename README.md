@@ -8,6 +8,24 @@ A location-based alarm app that tracks your live position and wakes you up (via 
 
 Falling asleep on public transit and missing your stop is a common, small-but-real problem. Rather than relying on manually setting timers or staying awake, this app lets you set a destination and radius in advance, then alerts you automatically when you're close — using live geolocation tracking in the background.
 
+## Screenshots
+
+**Set Alarm** — light and dark mode, with the live-location marker on the shared map
+
+| Light | Dark |
+|---|---|
+| ![Set Alarm, light mode](docs/screenshots/set-alarm-light.png) | ![Set Alarm, dark mode](docs/screenshots/set-alarm-dark.png) |
+
+**Add Location** — click the map to pick a point, then name it and set a radius
+
+![Add Location](docs/screenshots/add-location.png)
+
+**Saved Locations** and **Alarm History**
+
+![Saved Locations](docs/screenshots/saved-locations.png)
+
+![Alarm History](docs/screenshots/alarm-history.png)
+
 ## Tech stack
 
 - **Backend:** Node.js + Express
@@ -28,17 +46,25 @@ MERN was chosen to reuse a single JavaScript-based stack across the whole app, a
 - AlarmLog routes: create on trigger, list history, mark acknowledged (PATCH), all ownership-checked (including verifying the referenced location belongs to the requesting user)
 - Tested end-to-end with Thunder Client, including negative cases (missing/invalid token, deleting another user's location)
 - Frontend: signup and login pages with controlled forms, calling the backend over axios (CORS configured on the backend to allow this)
-- JWT stored in `localStorage` after login; redirects to the dashboard on login and to the login page after signup
-- `ProtectedRoute` wrapper component guarding the dashboard route, redirecting logged-out users to `/login`
-- Dashboard: fetches, displays, creates, and deletes the logged-in user's saved locations — list updates immediately on add/delete, no reload needed
-- Interactive map (Leaflet + react-leaflet) on the Dashboard: click to pick a location for the add-location form, with a marker showing the selection and a coordinate readout; click the marker again to deselect
+- JWT stored in `localStorage` after login; redirects to the app on login and to the login page after signup
+- `ProtectedRoute` wrapper guarding every in-app route, redirecting logged-out users to `/login`
+- Shared `AppLayout` with nested routes: one persistent map, live tracking, alarm logic, and the alarm modal live in the layout, so an alarm can fire from any page
+- Four pages rendered inside the layout via `Outlet` context: **Set Alarm** (landing page), **Add Location**, **Saved Locations**, **Alarm History**
+- Interactive map (Leaflet + react-leaflet): click to pick a location for the add-location form, with a marker showing the selection and a coordinate readout; click the marker again to deselect; form and marker reset after a successful submission
 - Live geolocation tracking via the browser's Geolocation API (`watchPosition`), shown as a distinct red marker on the map, separate from the location-picker marker
+- Alarm arming: pick one saved location from a dropdown and arm it — the app continuously compares live position against that location's radius using the Haversine formula
+- On arrival: a looping alarm sound (generated via the Web Audio API, no audio file needed) plays immediately, alongside a modal overlay ("Reached!" + OK button) that blocks the UI until dismissed
+- Acknowledging the alarm stops the sound, closes the modal, and marks the corresponding `AlarmLog` as acknowledged via the PATCH route — the alarm also auto-creates the `AlarmLog` entry the moment it triggers, disarming itself afterward (one active alarm at a time by design)
+- Alarm History page: lists past alarms with location names and acknowledged status, with a fallback label for locations deleted since the alarm fired
+- Custom UI in plain CSS: a design-token system (CSS variables), rounded sage/forest-green/blush palette, and a light/dark theme toggle that persists across reloads (including dark-styled map tiles)
 
 **Planned next:**
+- Highlight the active page in the nav bar
+- Expandable map: large on Add Location, smaller elsewhere, with expand/minimize controls and click-to-pick enabled only on Add Location
+- Further UI polish
 - Location edit (PATCH) route
-- Distance-based alarm triggering: compare live position against saved locations/radii, trigger an alarm and log it via the AlarmLog routes
-- Alarm history view on the frontend
 - Scalability pass: geospatial `$near` queries, indexing review
+- Real alarm sound file / customizable tone
 
 ## Data model
 
