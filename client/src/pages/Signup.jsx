@@ -18,7 +18,7 @@ function Signup() {
         }
     }
     return (
-        <div>
+        <div className='auth-card'>
             <h2>Signup</h2>
             <form onSubmit={handleSubmit}>
                 <input type='email' value ={email} onChange={(e) => setEmail(e.target.value)}></input>

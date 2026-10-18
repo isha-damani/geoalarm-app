@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { Outlet } from "react-router-dom";
 import axios from "axios";
 import {getDistanceInMeters} from '../utils/distance';
@@ -7,6 +7,7 @@ import LocationMap from '../components/LocationMap';
 import { Link } from "react-router-dom";
 
 function AppLayout() {
+    const [theme,setTheme] = useState(() => document.documentElement.dataset.theme);
     const [locations, setLocations] = useState([]);
     const [liveLocation, setLiveLocation] = useState(null);
     const [alarmModal, setAlarmModal] = useState(false);
@@ -16,6 +17,12 @@ function AppLayout() {
     const [lat, setLat] = useState('');
     const [lng, setLng] = useState('');
     const [formResetKey, setFormResetKey] = useState(0);
+
+    //ON THEME CHANGE
+    useEffect(() => {
+        document.documentElement.dataset.theme = theme;
+        localStorage.setItem('theme', theme);
+    },[theme]);
 
     //FETCH LOCATIONS
     useEffect(() => {
@@ -114,9 +121,10 @@ function AppLayout() {
                     zIndex: 999
                 }}>
                     <div style={{
-                        backgroundColor: 'green',
-                        padding: '2rem',
-                        borderRadius: '8px',
+                        backgroundColor: 'var(--surface)',
+                        padding: '2rem 2.5rem',
+                        borderRadius: 'var(--r-lg)',
+                        boxShadow: 'var(--shadow)',
                         textAlign: 'center'
                     }}>
                         <h2>Reached!</h2>
@@ -129,6 +137,7 @@ function AppLayout() {
                 <Link to='/add-location'>Add Location</Link>
                 <Link to='/saved-locations'>Saved Locations</Link>
                 <Link to='/history'>Alarm History</Link>
+                <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>{theme === 'dark' ? 'Light mode' : 'Dark mode'}</button>
             </nav>
             <LocationMap 
                 locations={locations} 

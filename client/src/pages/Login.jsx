@@ -18,7 +18,7 @@ function Login(){
     }
 
     return (
-        <div>
+        <div className='auth-card'>
             <h2>Login</h2>
             <form onSubmit={handleSubmit}>
                 <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder='email'></input>

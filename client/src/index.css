@@ -1,111 +1,175 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap');
+
+/* ---------- Design tokens (light mode) ----------
+   Dark mode later: add a [data-theme='dark'] block below that
+   overrides these same variables. Nothing else needs to change. */
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --bg: #fcf9f7;
+  --surface: #ffffff;
+  --text: #34413a;
+  --text-soft: #6f7d74;
+  --text-faint: #a3aea6;
+  --border: #eadfdb;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+  --forest: #2f5d4a;
+  --forest-dark: #244a3a;
+  --sage: #a9c0ae;
+  --sage-soft: #e6eee7;
+  --sage-ring: rgba(122, 158, 134, 0.28);
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --blush: #f8e3e9;
+  --blush-deep: #f1c9d5;
+  --rose: #b8607a;
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
+  --r-md: 20px;
+  --r-lg: 28px;
+  --r-pill: 999px;
+
+  --shadow: 0 10px 28px rgba(47, 93, 74, 0.08);
+  --shadow-sm: 0 4px 12px rgba(47, 93, 74, 0.1);
+
+  --font-body: 'DM Sans', system-ui, 'Segoe UI', sans-serif;
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+
+  color-scheme: light;
+
+  --on-forest: #ffffff;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
+/* ---------- Base ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--text);
+  background:
+    radial-gradient(900px 380px at 92% -8%, var(--blush) 0%, transparent 65%),
+    var(--bg);
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
 
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
+/* ---------- Typography ---------- */
 h1,
 h2 {
-  font-family: var(--heading);
+  font-family: var(--font-display);
   font-weight: 500;
-  color: var(--text-h);
+  color: var(--forest-dark);
+  letter-spacing: -0.01em;
+  margin: 0 0 0.75rem;
 }
 
 h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
+  font-size: 2rem;
 }
+
 h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
+  font-size: 1.55rem;
 }
+
 p {
-  margin: 0;
+  margin: 0 0 0.75rem;
+  color: var(--text-soft);
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+a {
+  color: var(--forest);
+  text-decoration: none;
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+/* ---------- Buttons ---------- */
+button {
+  font: inherit;
+  font-weight: 600;
+  color: #fff;
+  color: var(--on-forest);
+  background: var(--forest);
+  border: 0;
+  border-radius: var(--r-pill);
+  padding: 0.6rem 1.4rem;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
+}
+
+button:hover:not(:disabled) {
+  background: var(--forest-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+button:disabled {
+  background: var(--sage-soft);
+  color: var(--text-faint);
+  cursor: not-allowed;
+}
+
+/* ---------- Inputs ---------- */
+input,
+select {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-pill);
+  padding: 0.6rem 1.1rem;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+input::placeholder {
+  color: var(--text-faint);
+}
+
+input:focus,
+select:focus {
+  border-color: var(--sage);
+  box-shadow: 0 0 0 4px var(--sage-ring);
+}
+
+button:focus-visible {
+  outline: 3px solid var(--sage-ring);
+  outline-offset: 2px;
+}
+
+/* ---------- Dark mode ---------- */
+:root[data-theme='dark'] {
+  --bg: #121815;
+  --surface: #1b231f;
+  --text: #e4ebe6;
+  --text-soft: #9aab9f;
+  --text-faint: #66766b;
+  --border: #2a352f;
+
+  --forest: #8cc2a4;
+  --forest-dark: #cfe6d8;
+  --on-forest: #12211a;
+  --sage: #6f9a82;
+  --sage-soft: #26332c;
+  --sage-ring: rgba(140, 194, 164, 0.28);
+
+  --blush: #38242d;
+  --blush-deep: #4a2f3b;
+  --rose: #eba7ba;
+
+  --shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.4);
+
+  color-scheme: dark;
 }

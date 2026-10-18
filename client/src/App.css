@@ -1,184 +1,191 @@
-.counter {
-  font-size: 16px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: var(--accent);
-  background: var(--accent-bg);
-  border: 2px solid transparent;
-  transition: border-color 0.3s;
-  margin-bottom: 24px;
-
-  &:hover {
-    border-color: var(--accent-border);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
+/* ---------- App shell ---------- */
+#root {
+  width: 1100px;
+  max-width: 100%;
+  margin: 0 auto;
+  min-height: 100vh;
 }
 
-.hero {
+/* ---------- Nav ---------- */
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 1.1rem 1.5rem;
+}
+
+/* wordmark, no JSX needed */
+nav::before {
+  content: 'GeoAlarm';
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 600;
+  color: var(--forest);
+  margin-right: auto;
+  padding-right: 1.5rem;
+}
+
+nav a {
+  color: var(--text-soft);
+  font-weight: 500;
+  padding: 0.45rem 1.05rem;
+  border-radius: var(--r-pill);
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+nav a:hover {
+  background: var(--blush);
+  color: var(--rose);
+}
+
+/* shows up if you switch Link -> NavLink in AppLayout */
+nav a[aria-current='page'] {
+  background: var(--sage-soft);
+  color: var(--forest-dark);
+}
+
+nav button {
+  background: var(--sage-soft);
+  color: var(--forest-dark);
+  padding: 0.45rem 1.05rem;
+  font-weight: 500;
+  margin-left: 0.4rem;
+}
+
+nav button:hover:not(:disabled) {
+  background: var(--blush);
+  color: var(--rose);
+  box-shadow: none;
+  transform: none;
+}
+
+/* ---------- Map ---------- */
+.leaflet-container {
+  max-width: calc(100% - 3rem);
+  margin: 0 auto 1.5rem;
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
   position: relative;
-
-  .base,
-  .framework,
-  .vite {
-    inset-inline: 0;
-    margin: 0 auto;
-  }
-
-  .base {
-    width: 170px;
-    position: relative;
-    z-index: 0;
-  }
-
-  .framework,
-  .vite {
-    position: absolute;
-  }
-
-  .framework {
-    z-index: 1;
-    top: 34px;
-    height: 28px;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
-      scale(1.4);
-  }
-
-  .vite {
-    z-index: 0;
-    top: 107px;
-    height: 26px;
-    width: auto;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
-      scale(0.8);
-  }
+  z-index: 0; /* keeps map controls under the alarm modal */
+  font-family: var(--font-body);
 }
 
-#center {
+.leaflet-bar {
+  border: none !important;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+.leaflet-bar a {
+  color: var(--forest);
+  background: var(--surface);
+  border-bottom-color: var(--border);
+}
+
+/* darkens the map tiles only; markers stay normal */
+:root[data-theme='dark'] .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9);
+}
+
+/* ---------- Pages ----------
+   Page wrappers are plain <div>s with no style attribute;
+   the alarm modal has inline styles, so :not([style]) skips it. */
+#root > div:not([style]) {
+  padding: 0 1.5rem 3rem;
+}
+
+/* ---------- Forms ---------- */
+form {
   display: flex;
-  flex-direction: column;
-  gap: 25px;
-  place-content: center;
-  place-items: center;
-  flex-grow: 1;
-
-  @media (max-width: 1024px) {
-    padding: 32px 20px 24px;
-    gap: 18px;
-  }
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
 }
 
-#next-steps {
-  display: flex;
-  border-top: 1px solid var(--border);
-  text-align: left;
-
-  & > div {
-    flex: 1 1 0;
-    padding: 32px;
-    @media (max-width: 1024px) {
-      padding: 24px 20px;
-    }
-  }
-
-  .icon {
-    margin-bottom: 16px;
-    width: 22px;
-    height: 22px;
-  }
-
-  @media (max-width: 1024px) {
-    flex-direction: column;
-    text-align: center;
-  }
+select {
+  margin-right: 0.6rem;
 }
 
-#docs {
-  border-right: 1px solid var(--border);
-
-  @media (max-width: 1024px) {
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
-}
-
-#next-steps ul {
+/* ---------- Lists (saved locations, alarm history) ---------- */
+ul {
   list-style: none;
+  margin: 0;
   padding: 0;
   display: flex;
-  gap: 8px;
-  margin: 32px 0 0;
-
-  .logo {
-    height: 18px;
-  }
-
-  a {
-    color: var(--text-h);
-    font-size: 16px;
-    border-radius: 6px;
-    background: var(--social-bg);
-    display: flex;
-    padding: 6px 12px;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    transition: box-shadow 0.3s;
-
-    &:hover {
-      box-shadow: var(--shadow);
-    }
-    .button-icon {
-      height: 18px;
-      width: 18px;
-    }
-  }
-
-  @media (max-width: 1024px) {
-    margin-top: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-
-    li {
-      flex: 1 1 calc(50% - 8px);
-    }
-
-    a {
-      width: 100%;
-      justify-content: center;
-      box-sizing: border-box;
-    }
-  }
+  flex-direction: column;
+  gap: 0.6rem;
 }
 
-#spacer {
-  height: 88px;
-  border-top: 1px solid var(--border);
-  @media (max-width: 1024px) {
-    height: 48px;
-  }
+li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 0.7rem 1.1rem;
+  box-shadow: var(--shadow-sm);
 }
 
-.ticks {
-  position: relative;
+/* delete buttons: soft rose instead of the main green */
+li button {
+  background: var(--blush);
+  color: var(--rose);
+  padding: 0.4rem 1rem;
+  font-size: 0.9rem;
+}
+
+li button:hover:not(:disabled) {
+  background: var(--blush-deep);
+  box-shadow: none;
+}
+
+/* ---------- Auth card (login / signup) ---------- */
+#root > div.auth-card {
+  max-width: 420px;
+  margin: 14vh auto 0;
+  padding: 2.25rem 2rem 2.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow);
+}
+
+.auth-card::before {
+  content: 'GeoAlarm';
+  display: block;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--sage);
+  margin-bottom: 0.35rem;
+}
+
+.auth-card h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.auth-card form {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.9rem;
+}
+
+.auth-card input,
+.auth-card button {
   width: 100%;
+}
 
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    top: -4.5px;
-    border: 5px solid transparent;
-  }
-
-  &::before {
-    left: 0;
-    border-left-color: var(--border);
-  }
-  &::after {
-    right: 0;
-    border-right-color: var(--border);
-  }
+.auth-card button {
+  margin-top: 0.4rem;
+  padding: 0.75rem 1.4rem;
 }
