@@ -3,6 +3,8 @@ import Signup from './pages/Signup';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import AlarmHistory from './pages/AlarmHistory';
+import SavedLocations from './pages/SavedLocations';
+import SetAlarm from './pages/SetAlarm';
 import './App.css';
 import ProtectedRoute from './components/ProtectedRoute';
 import AppLayout from './layouts/AppLayout';
@@ -16,6 +18,8 @@ function App() {
       <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
           <Route path='/' element={<Dashboard />} />
           <Route path='/history' element={<AlarmHistory />} />
+          <Route path = '/saved-locations' element = {<SavedLocations />} />
+          <Route path = '/set-alarm' element = {<SetAlarm />} />
       </Route>
     </Routes>
   )

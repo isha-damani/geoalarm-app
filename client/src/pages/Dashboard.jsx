@@ -5,12 +5,11 @@ import LocationMap from '../components/LocationMap';
 import { useOutletContext } from 'react-router-dom';
 
 function Dashboard() {
-    const {locations, setLocations, liveLocation, setActiveAlarmLocationId} = useOutletContext();
+    const {locations, setLocations, liveLocation} = useOutletContext();
     const [name, setName] = useState('');
     const [radius, setRadius] = useState('');
     const [lat, setLat] = useState('');
     const [lng, setLng] = useState('');
-    const [selectedLocationId, setSelectedLocationId] = useState('');
     const [formResetKey, setFormResetKey] = useState(0);
     
     //ADD LOCATION
@@ -41,27 +40,6 @@ function Dashboard() {
             console.log(err);
         }
     }
-
-    //DELETE LOCATION
-    async function handleDelete(id){
-        try{
-            const token = localStorage.getItem('token');
-            const response = await axios.delete(
-                `http://localhost:3000/api/locations/${id}`,
-                {headers : {Authorization : `Bearer ${token}`}}
-            );
-            console.log(response.data);
-            setLocations(locations.filter((location) => location._id !== id));
-        }catch(err){
-            console.log(err);
-        }
-    }
-
-    //SET ALARM
-    function handleSetAlarm(){
-        setActiveAlarmLocationId(selectedLocationId);
-    }
-
     
     //RENDER
     return (
@@ -76,34 +54,6 @@ function Dashboard() {
             liveLocation={liveLocation} 
             resetKey={formResetKey}/>
 
-            <h2>Set an alarm</h2>
-            <select
-            value={selectedLocationId}
-            onChange={(e) => setSelectedLocationId(e.target.value)}
-            >
-                <option value="">Select a location</option>
-                {locations.map((location) => (
-                    <option key={location._id} value={location._id}>
-                        {location.name}
-                    </option>
-                ))}
-            </select>
-            <button 
-            disabled={!selectedLocationId}
-            onClick={handleSetAlarm}> 
-            Set Alarm
-            </button>
-
-            <h2>Saved Locations</h2>
-            <ul>
-                {locations.map((location) => (
-                    <li key={location._id}>
-                        {location.name} 
-                        <button onClick={() => handleDelete(location._id)}>Delete</button></li>
-    
-                ))}
-            </ul>
-        
             <h2>Add Location</h2>
             <form onSubmit={handleAddLocation}>
                 <input type='text' value={name} placeholder='name' onChange={(e) => setName(e.target.value)}></input>
