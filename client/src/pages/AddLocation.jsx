@@ -1,16 +1,12 @@
 //IMPORTS
 import {useState} from 'react';
 import axios from 'axios';
-import LocationMap from '../components/LocationMap';
 import { useOutletContext } from 'react-router-dom';
 
-function Dashboard() {
-    const {locations, setLocations, liveLocation} = useOutletContext();
+function AddLocation() {
+    const { locations, setLocations, liveLocation, lat, lng, setLat, setLng, formResetKey, setFormResetKey } = useOutletContext();
     const [name, setName] = useState('');
     const [radius, setRadius] = useState('');
-    const [lat, setLat] = useState('');
-    const [lng, setLng] = useState('');
-    const [formResetKey, setFormResetKey] = useState(0);
     
     //ADD LOCATION
     async function handleAddLocation(e){
@@ -44,17 +40,9 @@ function Dashboard() {
     //RENDER
     return (
         <div>
-            <h1>GEO-ALARM</h1>
-            <h2>Dashboard</h2>
-            <p>Selected location: {lat}, {lng}</p>
-            <LocationMap onLocationSelect={(lat,lng) => {
-                setLat(lat);
-                setLng(lng);
-            }} 
-            liveLocation={liveLocation} 
-            resetKey={formResetKey}/>
-
             <h2>Add Location</h2>
+            <p>Selected location: {lat}, {lng}</p>
+
             <form onSubmit={handleAddLocation}>
                 <input type='text' value={name} placeholder='name' onChange={(e) => setName(e.target.value)}></input>
                 <input type='number' value={radius} placeholder='radius' onChange={(e) => setRadius(e.target.value)}></input>
@@ -64,4 +52,4 @@ function Dashboard() {
     )
 }
 
-export default Dashboard;
+export default AddLocation;

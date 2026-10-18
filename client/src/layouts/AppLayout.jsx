@@ -4,6 +4,7 @@ import axios from "axios";
 import {getDistanceInMeters} from '../utils/distance';
 import {playAlarmSound} from '../utils/playAlarmSound';
 import LocationMap from '../components/LocationMap';
+import { Link } from "react-router-dom";
 
 function AppLayout() {
     const [locations, setLocations] = useState([]);
@@ -12,13 +13,18 @@ function AppLayout() {
     const [activeAlarmLocationId, setActiveAlarmLocationId] = useState(null);
     const [currentAlarmLogId, setCurrentAlarmLogId] = useState(null);
     const [stopAlarmFn, setStopAlarmFn] = useState(null);
+    const [lat, setLat] = useState('');
+    const [lng, setLng] = useState('');
+    const [formResetKey, setFormResetKey] = useState(0);
 
     //FETCH LOCATIONS
     useEffect(() => {
         async function fetchLocations() {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get("http://localhost:3000/api/locations", {headers : {Authorization : `Bearer ${token}`}});
+                const response = await axios.get(
+                                "http://localhost:3000/api/locations", 
+                                {headers : {Authorization : `Bearer ${token}`}});
                 // console.log(response.data);
                 setLocations(response.data);
             } catch (err) {
@@ -49,7 +55,9 @@ function AppLayout() {
         if(!activeAlarmLocationId) return;
         const location = locations.find(location => location._id === activeAlarmLocationId);
         if(!location) return;
-        const distance = getDistanceInMeters(liveLocation.lat, liveLocation.lng, location.coordinates.coordinates[1], location.coordinates.coordinates[0]);
+        const distance = getDistanceInMeters(liveLocation.lat, liveLocation.lng, 
+                                location.coordinates.coordinates[1], 
+                                location.coordinates.coordinates[0]);
         async function triggerAlarm(){
             try{
                 const token = localStorage.getItem('token');
@@ -116,7 +124,24 @@ function AppLayout() {
                     </div>
                 </div>
             ) : null}
-            <Outlet context={{ locations, setLocations, liveLocation, setActiveAlarmLocationId }} />
+            <nav>
+                <Link to='/'>Set Alarm</Link>
+                <Link to='/add-location'>Add Location</Link>
+                <Link to='/saved-locations'>Saved Locations</Link>
+                <Link to='/history'>Alarm History</Link>
+            </nav>
+            <LocationMap 
+                locations={locations} 
+                liveLocation={liveLocation} 
+                onLocationSelect={(lat, lng) => {setLat(lat); setLng(lng); }} 
+                resetKey={formResetKey}
+            />
+            <Outlet 
+                context={{ locations, setLocations, 
+                        liveLocation, setActiveAlarmLocationId , 
+                        lat, lng, setLat, setLng, 
+                        formResetKey, setFormResetKey}} 
+            />
         </>
     )
 }
