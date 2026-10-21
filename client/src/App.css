@@ -189,3 +189,31 @@ li button:hover:not(:disabled) {
   margin-top: 0.4rem;
   padding: 0.75rem 1.4rem;
 }
+
+.map-toggle {
+  max-width: calc(100% - 3rem);
+  margin: -0.75rem auto 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.map-toggle button {
+  background: var(--sage-soft);
+  color: var(--forest-dark);
+  padding: 0.4rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.map-frame .leaflet-container {
+  height: 180px;
+}
+
+.map-frame.large .leaflet-container {
+  height: 400px;
+}
+.map-toggle button:hover:not(:disabled) {
+  background: var(--blush);
+  color: var(--rose);
+  box-shadow: none;
+  transform: none;
+}

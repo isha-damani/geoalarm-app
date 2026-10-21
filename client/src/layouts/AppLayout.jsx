@@ -1,4 +1,4 @@
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import axios from "axios";
 import {getDistanceInMeters} from '../utils/distance';
@@ -18,6 +18,8 @@ function AppLayout() {
     const [lng, setLng] = useState('');
     const [formResetKey, setFormResetKey] = useState(0);
     const currentLocation = useLocation();
+    const [mapExpanded, setMapExpanded] = useState(false);
+    const isAddLocation = currentLocation.pathname === '/add-location';
 
     //ON THEME CHANGE
     useEffect(() => {
@@ -145,8 +147,17 @@ function AppLayout() {
                 liveLocation={liveLocation} 
                 onLocationSelect={(lat, lng) => {setLat(lat); setLng(lng); }} 
                 resetKey={formResetKey}
-                pickEnabled={currentLocation.pathname === '/add-location'}
+                pickEnabled={isAddLocation}
+                large={isAddLocation || mapExpanded}
             />
+            <div className='map-toggle'>
+                {(!isAddLocation) ?
+                    <button onClick={() => setMapExpanded(!mapExpanded)}>
+                        {(mapExpanded) ? 'Minimize Map' : 'Expand Map'}
+                    </button>
+                : null
+                }
+            </div>
             <Outlet 
                 context={{ locations, setLocations, 
                         liveLocation, setActiveAlarmLocationId , 
