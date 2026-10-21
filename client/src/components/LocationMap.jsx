@@ -8,7 +8,7 @@ const redIcon = L.icon({
     iconAnchor: [12, 41]
 });
 
-function LocationMap({onLocationSelect, liveLocation, resetKey}){
+function LocationMap({onLocationSelect, liveLocation, resetKey, pickEnabled}){
     return(
         <MapContainer
         center={[17.530322442319388, 78.48127728011036]}
@@ -20,22 +20,23 @@ function LocationMap({onLocationSelect, liveLocation, resetKey}){
             attribution="© OpenStreetMap contributors"
             >
             </TileLayer>
-            <LocationMarker key={resetKey} onLocationSelect={onLocationSelect} />
+            <LocationMarker key={resetKey} onLocationSelect={onLocationSelect} pickEnabled={pickEnabled}/>
             {liveLocation ? <Marker position={liveLocation} icon={redIcon}></Marker> : null}
         </MapContainer>
     )
 }
 
-function LocationMarker({onLocationSelect}){
+function LocationMarker({onLocationSelect, pickEnabled}){
     const [position, setPosition] = useState(null);
     useMapEvents({
         click(e){
-            console.log(e.latlng);
+            if(!pickEnabled) return;
+            // console.log(e.latlng);
             setPosition(e.latlng);
             onLocationSelect(e.latlng.lat, e.latlng.lng);
         }
     })
-    return position ? <Marker 
+    return position&&pickEnabled ? <Marker 
     position={position} 
     eventHandlers={
         {

@@ -4,7 +4,7 @@ import axios from "axios";
 import {getDistanceInMeters} from '../utils/distance';
 import {playAlarmSound} from '../utils/playAlarmSound';
 import LocationMap from '../components/LocationMap';
-import { Link } from "react-router-dom";
+import { useLocation , NavLink} from "react-router-dom";
 
 function AppLayout() {
     const [theme,setTheme] = useState(() => document.documentElement.dataset.theme);
@@ -17,6 +17,7 @@ function AppLayout() {
     const [lat, setLat] = useState('');
     const [lng, setLng] = useState('');
     const [formResetKey, setFormResetKey] = useState(0);
+    const currentLocation = useLocation();
 
     //ON THEME CHANGE
     useEffect(() => {
@@ -133,10 +134,10 @@ function AppLayout() {
                 </div>
             ) : null}
             <nav>
-                <Link to='/'>Set Alarm</Link>
-                <Link to='/add-location'>Add Location</Link>
-                <Link to='/saved-locations'>Saved Locations</Link>
-                <Link to='/history'>Alarm History</Link>
+                <NavLink to='/' end>Set Alarm</NavLink>
+                <NavLink to='/add-location'>Add Location</NavLink>
+                <NavLink to='/saved-locations'>Saved Locations</NavLink>
+                <NavLink to='/history'>Alarm History</NavLink>
                 <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>{theme === 'dark' ? 'Light mode' : 'Dark mode'}</button>
             </nav>
             <LocationMap 
@@ -144,6 +145,7 @@ function AppLayout() {
                 liveLocation={liveLocation} 
                 onLocationSelect={(lat, lng) => {setLat(lat); setLng(lng); }} 
                 resetKey={formResetKey}
+                pickEnabled={currentLocation.pathname === '/add-location'}
             />
             <Outlet 
                 context={{ locations, setLocations, 
